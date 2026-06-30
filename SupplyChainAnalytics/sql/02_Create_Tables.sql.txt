@@ -1,0 +1,154 @@
+USE SupplyChainAnalytics;
+
+-- ===========================
+-- Customer Dimension
+-- ===========================
+
+CREATE TABLE DimCustomer (
+
+    CustomerID INT PRIMARY KEY,
+
+    CustomerFirstName VARCHAR(50),
+
+    CustomerLastName VARCHAR(50),
+
+    CustomerSegment VARCHAR(30),
+
+    CustomerCity VARCHAR(100),
+
+    CustomerState VARCHAR(100),
+
+    CustomerCountry VARCHAR(100)
+
+);
+
+-- ===========================
+-- Category Dimension
+-- ===========================
+
+CREATE TABLE DimCategory (
+
+    CategoryID INT PRIMARY KEY,
+
+    CategoryName VARCHAR(100)
+
+);
+
+-- ===========================
+-- Product Dimension
+-- ===========================
+
+CREATE TABLE DimProduct (
+
+    ProductID INT PRIMARY KEY,
+
+    ProductName VARCHAR(255),
+
+    ProductPrice DECIMAL(10,2),
+
+    DepartmentID INT,
+
+    DepartmentName VARCHAR(100),
+
+    CategoryID INT,
+
+    ProductImage TEXT,
+
+    FOREIGN KEY (CategoryID)
+    REFERENCES DimCategory(CategoryID)
+
+);
+
+-- ===========================
+-- Shipping Dimension
+-- ===========================
+
+CREATE TABLE DimShipping (
+
+    ShippingKey INT PRIMARY KEY,
+
+    ShippingMode VARCHAR(50),
+
+    DeliveryStatus VARCHAR(50),
+
+    ActualShippingDays INT,
+
+    ScheduledShippingDays INT,
+
+    LateDeliveryRisk TINYINT
+
+);
+
+-- ===========================
+-- Date Dimension
+-- ===========================
+
+CREATE TABLE DimDate (
+
+    DateKey INT PRIMARY KEY,
+
+    FullDate DATE,
+
+    Year INT,
+
+    Quarter INT,
+
+    Month INT,
+
+    MonthName VARCHAR(20),
+
+    Day INT,
+
+    Weekday VARCHAR(20),
+
+    IsWeekend BOOLEAN
+
+);
+
+-- ===========================
+-- Orders Fact Table
+-- ===========================
+
+CREATE TABLE FactOrders (
+
+    OrderItemID INT PRIMARY KEY,
+
+    OrderID INT,
+
+    CustomerID INT,
+
+    ProductID INT,
+
+    ShippingKey INT,
+
+    DateKey INT,
+
+    GrossSales DECIMAL(10,2),
+
+    NetSales DECIMAL(10,2),
+
+    Profit DECIMAL(10,2),
+
+    DiscountAmount DECIMAL(10,2),
+
+    DiscountRate DECIMAL(5,2),
+
+    Quantity INT,
+
+    ProfitMarginPercent DECIMAL(8,2),
+
+    ShippingDelay INT,
+
+    FOREIGN KEY (CustomerID)
+    REFERENCES DimCustomer(CustomerID),
+
+    FOREIGN KEY (ProductID)
+    REFERENCES DimProduct(ProductID),
+
+    FOREIGN KEY (ShippingKey)
+    REFERENCES DimShipping(ShippingKey),
+
+    FOREIGN KEY (DateKey)
+    REFERENCES DimDate(DateKey)
+
+);
